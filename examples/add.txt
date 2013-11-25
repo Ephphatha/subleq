@@ -1,4 +1,4 @@
 5 2
-2 1 1 --Store negated value of second operand in temporary cell
-0 2 2 --Subtract negated value from first operand (-- becomes +)
+1 2 1 --Store negated value of second operand in temporary cell
+2 0 2 --Subtract negated value from first operand (-- becomes +)
 2 2 3 --Clear temporary cell

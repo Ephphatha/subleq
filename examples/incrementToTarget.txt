@@ -1,18 +1,18 @@
 0 20 1
 3 3 1 --INITIALISATION: Clear temporary cell for negated increment value
-3 2 2 --                Store negated incrementor in temporary cell
+2 3 2 --                Store negated incrementor in temporary cell
 4 4 3 --                Clear temporary cell to copy negated incrementor
-4 3 4 --                Subtract negated incrementor from temporary cell
+3 4 4 --                Subtract negated incrementor from temporary cell
 2 2 5 --                Clear destination cell for negated incrementor
-2 4 6 --                Store negated incrementor in destination cell
+4 2 6 --                Store negated incrementor in destination cell
 4 4 7 --                Clear temporary cell for negated counter
-4 1 8 --                Store negated counter in temporary cell
+1 4 8 --                Store negated counter in temporary cell
 3 3 9 --                Clear temporary cell to copy negated counter
-3 4 10 --               Subtract negated counter from temporary cell
+4 3 10 --               Subtract negated counter from temporary cell
 1 1 11 --               Clear destination cell for negated counter
-1 3 12 --               Store negated counter in destination cell
+3 1 12 --               Store negated counter in destination cell
 4 4 13 --CLEANUP:       Clear temporary cell
 3 3 14 --               Clear temporary cell
-1 2 15 --LOOP PREP:     Decrement counter to compensate for LEQ branch
-0 2 16 --LOOP:          Increment variable
-1 2 15 --               Decrement counter and continue if required
+2 1 15 --LOOP PREP:     Decrement counter to compensate for LEQ branch
+2 0 16 --LOOP:          Increment variable
+2 1 15 --               Decrement counter and continue if required

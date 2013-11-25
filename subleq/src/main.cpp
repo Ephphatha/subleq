@@ -138,9 +138,9 @@ int subleq(
 		memory.resize(std::max(operand1Address, operand2Address) + 1);
 	}
 
-	memory[operand1Address] -= memory[operand2Address];
+	memory[operand2Address] -= memory[operand1Address];
 
-	if (memory[operand1Address] <= 0) {
+	if (memory[operand2Address] <= 0) {
 		programCounter = jmpAddress;
 	}
 	else {
