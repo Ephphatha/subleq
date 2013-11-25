@@ -5,7 +5,13 @@
 #include <tuple>
 #include <algorithm>
 
-int subleq(std::vector<int> &memory, unsigned int &programCounter, const unsigned int operand1Address, const unsigned int operand2Address, const unsigned int jmpAddress);
+int subleq(
+	std::vector<int> &memory,
+	unsigned int &programCounter,
+	const unsigned int operand1Address,
+	const unsigned int operand2Address,
+	const unsigned int jmpAddress
+);
 
 const std::string dumpMemory(const std::vector<int> &memory);
 
@@ -32,7 +38,7 @@ int main(int argc, char* argv[]) {
 	source.open(argv[1]);
 
 	if (!source.is_open()) {
-		std::cerr << "Unable to open " << argv[0] << ". Please ensure the file exists and is readable." << std::endl;
+		std::cerr << "Unable to open " << argv[1] << ". Please ensure the file exists and is readable." << std::endl;
 		return -1;
 	}
 
@@ -80,11 +86,12 @@ int main(int argc, char* argv[]) {
 			catch (std::ios::failure &) {
 				jmpAddress = program.size() + 1;
 				if (verbose) {
-					std::cout << "Warning: Instruction " << program.size() << " does not specify a jmp address, assuming " << jmpAddress << "." << std::endl;
+					std::cout << "Warning: Instruction " << program.size()
+					          << " does not specify a jump address, assuming " << jmpAddress << "." << std::endl;
 				}
 			}
 
-			std::tuple<unsigned int, unsigned int, unsigned int> instruction (operand1Address, operand2Address, jmpAddress);
+			std::tuple<unsigned int, unsigned int, unsigned int> instruction(operand1Address, operand2Address, jmpAddress);
 			program.push_back(instruction);
 		}
 		catch (std::ios::failure &e) {
@@ -96,7 +103,7 @@ int main(int argc, char* argv[]) {
 	source.close();
 
 	std::cout << "Initial state:" << std::endl
-		      << dumpMemory(memory) << std::endl;
+	          << dumpMemory(memory) << std::endl;
 
 	std::tuple<unsigned int, unsigned int, unsigned int> instruction;
 	unsigned int programCounter = 0;
@@ -106,8 +113,8 @@ int main(int argc, char* argv[]) {
 		}
 		catch (std::out_of_range &) {
 			std::cout << "Final state:" << std::endl
-				      << dumpMemory(memory) << std::endl
-				      << "Program execution halted." << std::endl;
+			          << dumpMemory(memory) << std::endl
+			          << "Program execution halted." << std::endl;
 			return 0;
 		}
 
@@ -120,7 +127,13 @@ int main(int argc, char* argv[]) {
 	}
 }
 
-int subleq(std::vector<int> &memory, unsigned int &programCounter, const unsigned int operand1Address, const unsigned int operand2Address, const unsigned int jmpAddress) {
+int subleq(
+	std::vector<int> &memory,
+	unsigned int &programCounter,
+	const unsigned int operand1Address,
+	const unsigned int operand2Address,
+	const unsigned int jmpAddress
+) {
 	if (memory.size() <= operand1Address || memory.size() <= operand2Address) {
 		memory.resize(std::max(operand1Address, operand2Address) + 1);
 	}
