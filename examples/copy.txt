@@ -1,0 +1,5 @@
+-5
+1 1 1 --Clear destination cell
+2 0 2 --Use temporary memory cell to store negated copy of value
+1 2 3 --Subtract negated value from destination cell (-- becomes +)
+2 2 4 --Clear temporary cell
