@@ -7,10 +7,10 @@
 
 int subleq(
 	std::vector<int> &memory,
-	unsigned int &programCounter,
-	const unsigned int operand1Address,
-	const unsigned int operand2Address,
-	const unsigned int jmpAddress
+	int &programCounter,
+	const int operand1Address,
+	const int operand2Address,
+	const int jmpAddress
 );
 
 const std::string dumpMemory(const std::vector<int> &memory);
@@ -43,108 +43,68 @@ int main(int argc, char* argv[]) {
 	}
 
 	std::vector<int> memory;
-	std::vector<std::tuple<unsigned int, unsigned int, unsigned int>> program;
 
-	std::string line;
-	std::stringstream lineStream;
+	source.exceptions(std::ios::failbit);
 
-	if (!source.eof()) {
-		std::getline(source, line);
-
-		lineStream.str(line);
-		lineStream.exceptions(std::ios::failbit);
-
-		int byte = 0;
-		while (!lineStream.eof()) {
-			try {
-				lineStream >> byte;
-				memory.push_back(byte);
-			}
-			catch (std::ios::failure &e) {
-				std::cerr << "Invalid memory value: " << e.what() << std::endl;
-				source.close();
-				return -1;
-			}
-		}
-	}
+	int byte = 0;
 
 	while (!source.eof()) {
-		std::getline(source, line);
-
-		lineStream.clear();
-		lineStream.str(line);
-		lineStream.exceptions(std::ios::failbit);
-
 		try {
-			unsigned int operand1Address = 0, operand2Address = 0, jmpAddress = 1;
-
-			lineStream >> operand1Address >> operand2Address;
-
-			try {
-				lineStream >> jmpAddress;
-			}
-			catch (std::ios::failure &) {
-				jmpAddress = program.size() + 1;
-				if (verbose) {
-					std::cout << "Warning: Instruction " << program.size()
-					          << " does not specify a jump address, assuming " << jmpAddress << "." << std::endl;
-				}
-			}
-
-			std::tuple<unsigned int, unsigned int, unsigned int> instruction(operand1Address, operand2Address, jmpAddress);
-			program.push_back(instruction);
+			source >> byte;
+			memory.push_back(byte);
 		}
-		catch (std::ios::failure &e) {
-			std::cerr << "Invalid or incomplete instruction: " << e.what() << std::endl;
-			source.close();
-			return -1;
+		catch (std::ios::failure &) {
+			//Probably a comment
+			source.clear();
+			source.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		}
 	}
 	source.close();
 
-	std::cout << "Initial state:" << std::endl
-	          << dumpMemory(memory) << std::endl;
+	std::cout << "Initial state: " << dumpMemory(memory) << std::endl;
 
-	std::tuple<unsigned int, unsigned int, unsigned int> instruction;
-	unsigned int programCounter = 0;
+	int programCounter = 0;
 	while (true) {
 		try {
-			instruction = program.at(programCounter);
+			if (debug) {
+				std::cout << "Program Counter: " << programCounter << std::endl
+				          << "Operands: (" << memory.at(programCounter) << ", " << memory.at(programCounter + 1) << ", " << memory.at(programCounter + 2) << ")" << std::endl;
+			}
+
+			subleq(memory, programCounter, memory.at(programCounter), memory.at(programCounter + 1), memory.at(programCounter + 2));
+
+			if (debug) {
+				if (programCounter > 0 && programCounter + 2 < static_cast<int>(memory.size())) {
+					std::cout << "Current state: " << dumpMemory(memory) << std::endl;
+				}
+			}
 		}
 		catch (std::out_of_range &) {
-			std::cout << "Final state:" << std::endl
-			          << dumpMemory(memory) << std::endl
+			std::cout << "Final state: " << dumpMemory(memory) << std::endl
 			          << "Program execution halted." << std::endl;
 			return 0;
 		}
-
-		if (debug) {
-			std::cout << dumpMemory(memory) << std::endl
-			          << "(" << std::get<0>(instruction) << ", " << std::get<1>(instruction) << ", " << std::get<2>(instruction) << ")" << std::endl;
-		}
-
-		subleq(memory, programCounter, std::get<0>(instruction), std::get<1>(instruction), std::get<2>(instruction));
 	}
 }
 
 int subleq(
 	std::vector<int> &memory,
-	unsigned int &programCounter,
-	const unsigned int operand1Address,
-	const unsigned int operand2Address,
-	const unsigned int jmpAddress
+	int &programCounter,
+	const int operand1Address,
+	const int operand2Address,
+	const int jmpAddress
 ) {
-	if (memory.size() <= operand1Address || memory.size() <= operand2Address) {
+	if (operand1Address > static_cast<int>(memory.size()) || operand2Address > static_cast<int>(memory.size())) {
 		memory.resize(std::max(operand1Address, operand2Address) + 1);
 	}
 
-	memory[operand2Address] -= memory[operand1Address];
+	memory.at(operand2Address) -= memory.at(operand1Address);
 
-	if (memory[operand2Address] <= 0) {
+	if (memory.at(operand2Address) <= 0) {
 		programCounter = jmpAddress;
 	}
 	else {
-		++programCounter;
+		programCounter += 3;
 	}
 
 	return programCounter;

@@ -1,4 +1,5 @@
-5 2
-1 2 1 --Store negated value of second operand in temporary cell
-2 0 2 --Subtract negated value from first operand (-- becomes +)
-2 2 3 --Clear temporary cell
+0 0 6 --Jump past data section
+5 2 0 --:DATA
+4 5 9 --Store negated value of second operand in temporary cell
+5 3 12 --Subtract negated value from first operand (-- becomes +)
+5 5 -1 --Clear temporary cell and exit
